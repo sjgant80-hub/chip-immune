@@ -1,0 +1,26 @@
+name: proof
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: chip-sim, the runner, the page and the pins (CI3, CI9, CI10)
+        run: node --test test/chip.test.mjs test/page.test.mjs
+      - name: device A's learning and the share to B re-derived byte for byte
+        run: node tools/learn.mjs --check
+      - name: the held-out record re-derived byte for byte (CI-EQ, CI2, CI4-CI8)
+        run: node tools/eval.mjs --check
+      # Pinned. An unpinned gate is a gate somebody else can change.
+      - name: witness - try to break each kernel, then READ the verdict (must be CLEAN, nothing baselined)
+        run: |
+          git clone --depth 1 --branch v0.6 https://github.com/sjgant80-hub/witness.git /tmp/witness
+          for k in chip run; do
+            node /tmp/witness/witness.mjs mutate "src/$k.mjs" --timeout 240000 --cap 1000 --test node --test test/chip.test.mjs > "verdict-$k.txt" 2>&1
+            tail -3 "verdict-$k.txt"
+            grep -q '"clean": true' "verdict-$k.txt" || { echo "::error::mutants survived in src/$k.mjs"; exit 1; }
+            node tools/gate-receipt.mjs "$k" "src/$k.mjs" "verdict-$k.txt" --check
+          done

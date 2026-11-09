@@ -1,0 +1,15 @@
+CHIP IMMUNE — credits and provenance
+
+Data: the MNIST database of handwritten digits, Y. LeCun, C. Cortes and C. J. C. Burges, licensed CC BY-SA 3.0, from
+Google's public mirror; the files keep their CC BY-SA 3.0 licence.
+
+Built on, byte for byte (pinned in vendor/SOURCES.json and sealed in CLAIMS.md): Rung 1 sjgant80-hub/settling-cell (the
+reference cell), Rung 3 sjgant80-hub/hybrid-gate (the MNIST conversion), Rung 4 sjgant80-hub/mesh-share (the defended
+shape), Rung 5 sjgant80-hub/geometric-defence (the starting antibodies), and the estate's Ed25519 keys from
+sjgant80-hub/living-seed. The cell's energy follows Hopfield (1982) and Krotov & Hopfield (2016).
+
+chip-sim is an emulator written to microcontroller rules. Nothing here has run on a microcontroller.
+
+Powered by the Konomi architecture, created by Thomas Frumkin.
+
+vendor/liveware/: from sjgant80-hub/liveware at 48205c7. This repository's own code is MIT licensed.

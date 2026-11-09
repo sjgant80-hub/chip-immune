@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chip immune · a defence for small devices</title>
+<meta name="description" content="Rung 7 of the geometric ladder: a signature floor and a settling fit-check in one fixed block of memory, fail-safe, self-improving and sharing, run on a labelled microcontroller emulator. Every failure published.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<style>
+:root{--bg:#f7f5f0;--panel:#ffffff;--ink:#1d1c1a;--muted:#6b665c;--line:rgba(29,28,26,.12);--accent:#3f6b47;--accent-dim:rgba(63,107,71,.10);--win:#2f7a3d;--tie:#a5701c;--bad:#b3452c;--px0:#ffffff;--px1:#1d1c1a;--mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;--sans:'Inter',-apple-system,system-ui,sans-serif;--serif:'Cormorant Garamond','Iowan Old Style',Georgia,serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1a1e;--panel:#212127;--ink:#e8e4db;--muted:#928d80;--line:rgba(232,228,219,.12);--accent:#7a9c7e;--accent-dim:rgba(122,156,126,.14);--win:#7acc85;--tie:#d4a052;--bad:#d67a5a;--px0:#212127;--px1:#e8e4db}}
+:root[data-theme="dark"]{--bg:#1a1a1e;--panel:#212127;--ink:#e8e4db;--muted:#928d80;--line:rgba(232,228,219,.12);--accent:#7a9c7e;--accent-dim:rgba(122,156,126,.14);--win:#7acc85;--tie:#d4a052;--bad:#d67a5a;--px0:#212127;--px1:#e8e4db}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none !important}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+main{max-width:1040px;margin:0 auto;padding:0 16px 64px}
+nav.top{position:sticky;top:0;z-index:3;background:var(--bg);border-bottom:1px solid var(--line);display:flex;gap:14px;flex-wrap:wrap;padding:8px 16px;font-family:var(--mono);font-size:12px}
+nav.top a{color:var(--muted);text-decoration:none} nav.top a:hover{color:var(--accent)}
+header.hero{max-width:1040px;margin:0 auto;padding:36px 16px 10px}
+h1{font-family:var(--serif);font-size:clamp(34px,6vw,58px);line-height:1.05;font-weight:600}
+.lede{font-size:19px;color:var(--muted);max-width:780px;margin-top:10px}
+.verdictline{font-size:17px;margin-top:12px;max-width:780px}
+section{margin-top:40px}
+h2{font-family:var(--serif);font-size:30px;font-weight:600;margin-bottom:8px}
+h3{font-size:16px;margin:16px 0 6px}
+p+p{margin-top:8px} ul,ol{padding-left:22px} li{margin:4px 0}
+.muted{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card .k{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.card .big{font-size:26px;font-weight:600;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.card .vs{font-size:14px;color:var(--muted)}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;padding:2px 10px;border-radius:12px;white-space:nowrap}
+.chip.win{background:color-mix(in srgb,var(--win) 15%,transparent);color:var(--win)} .chip.bad{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+.bar{height:10px;border-radius:5px;background:var(--line);margin:3px 0;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .08s linear} .bar.m i{background:var(--muted)}
+button{font:inherit;font-size:15px;color:#fff;background:var(--accent);border:0;border-radius:6px;padding:9px 16px;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--tie);outline-offset:2px}
+button:disabled{opacity:.55;cursor:progress}
+select{font:inherit;font-size:14px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin-top:10px}
+td,th{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+.ok{color:var(--win);font-weight:600} .no{color:var(--bad);font-weight:600}
+.svgwrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:10px}
+.svgwrap svg{display:block;min-width:680px;width:100%;height:auto}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-dim);padding:1px 5px;border-radius:3px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.controls label{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--muted)}
+.controls input{width:90px;font:inherit;font-size:14px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:4px 6px}
+.stage{display:grid;grid-template-columns:minmax(200px,280px) 1fr;gap:18px;align-items:start;margin-top:10px}
+.stage canvas{width:100%;height:auto;aspect-ratio:1;border:1px solid var(--line);border-radius:8px;background:var(--px0);image-rendering:pixelated}
+.fits{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:2px 8px;align-items:center;font-family:var(--mono);font-size:12.5px}
+.fits .bar{margin:0}
+.fits .win i{background:var(--win)}
+.readout{font-size:15px;margin-top:8px}
+.memories{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;margin-top:10px}
+.memories figure{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.memories canvas{width:100%;height:auto;aspect-ratio:1;border:1px solid var(--line);border-radius:4px;image-rendering:pixelated;background:var(--px0)}
+.timeline{list-style:none;padding:0;border-left:2px solid var(--accent);margin-top:10px}
+.timeline li{padding:4px 0 8px 14px;position:relative}
+.timeline li::before{content:'';position:absolute;left:-6px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.timeline b{font-family:var(--mono);font-size:12.5px}
+footer{max-width:1040px;margin:0 auto;padding:22px 16px 40px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px}
+footer p+p{margin-top:6px}
+@media (max-width:640px){.stage{grid-template-columns:1fr}.stage canvas{max-width:260px}td,th{padding:6px 5px;font-size:13.5px}}
+</style>
+</head>
+<body>
+<nav class="top" aria-label="Sections">
+  <a href="#result">The result</a><a href="#chip">The chip, byte by byte</a><a href="#try">Screen one input</a><a href="#rerun">Re-run it</a><a href="#start">Start here</a><a href="#how">How it works</a><a href="#blueprint">Blueprint</a><a href="#adoption">Adoption</a><a href="#paper">White paper</a><a href="#business">For business</a>
+</nav>
+<header class="hero">
+  <h1>A defence small enough for a microcontroller.</h1>
+  <p class="lede">A signature check, then a settling fit-check, in one fixed block of memory with whole numbers only. It checks its own memory on every input, falls back safely when that memory is corrupted, tries to improve itself in spare cycles with no model, and shares what it learns with other devices over signed messages. <b>Everything here ran on chip-sim, an emulator written to microcontroller rules. It has not run on a real chip yet.</b></p>
+  <p class="verdictline" id="verdictline">Loading the record…</p>
+</header>
+<main>
+<section id="result">
+  <h2>The result</h2>
+  <p class="muted">Each claim was written down with its bar before any code (<a href="CLAIMS.md">CLAIMS.md</a>). The chip, its learning record and its shapes were frozen by hash before the test digits were read (<a href="SEAL2.md">SEAL2.md</a>). A claim that misses its bar is kept and shown as failed. Every number here is read from the committed record, and every number from the emulator says so.</p>
+  <div class="tablewrap"><table id="claims"><thead><tr><th>Claim</th><th>What it says</th><th>Measured (emulator)</th><th>Bar</th><th>Verdict</th></tr></thead><tbody></tbody></table></div>
+  <h3>What the result says</h3>
+  <p id="lesson">…</p>
+</section>
+<section id="chip">
+  <h2>The chip, byte by byte</h2>
+  <p>The whole layer lives in one block of memory set aside at boot. Your tab lays it out from the same code the emulator runs (<code>src/chip.mjs</code>), region by region.</p>
+  <div id="arena" role="img" aria-label="The arena, region by region" style="display:flex;height:34px;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:12px 0"></div>
+  <div class="tablewrap"><table id="regions"><thead><tr><th>Region</th><th>What it holds</th><th>Bytes</th></tr></thead><tbody></tbody></table></div>
+  <div class="cards" id="budget" style="margin-top:14px"></div>
+</section>
+<section id="try">
+  <h2>Screen one input</h2>
+  <p>Pick an input and send it through the emulated chip in your tab: the signature floor, the memory check, then the fit-check. Tick <b>corrupt a byte first</b> to flip one byte of the chip's memory before the input arrives and watch it fall back safely.</p>
+  <div class="controls">
+    <label>input <select id="t-kind"><option value="genuine">a real test digit</option><option value="scrambled">a scrambled digit (attack)</option><option value="noise">random noise (attack)</option><option value="inverted">an inverted digit (attack)</option></select></label>
+    <label>number <input id="t-i" type="number" min="0" max="299" value="7"></label>
+    <label><input id="t-fault" type="checkbox"> corrupt a byte first</label>
+    <label><input id="t-forge" type="checkbox"> change one signed byte</label>
+    <button id="t-go">Screen it</button><span id="t-status" class="muted"></span>
+  </div>
+  <div class="tablewrap"><table id="t-out" hidden><thead><tr><th>Step</th><th>What happened</th></tr></thead><tbody></tbody></table></div>
+</section>
+<section id="rerun">
+  <h2>Re-run it in your browser</h2>
+  <p>Your tab boots the emulated chips from the committed files, screens all 10,000 test digits and every held-out attack, injects every fault, and hashes the record. It takes a few minutes and downloads the MNIST files (about 11 MB). Nothing is sent anywhere.</p>
+  <div class="controls"><button id="go">Re-run the whole record</button><span id="gostatus" class="muted"></span></div>
+  <div class="tablewrap"><table id="proof" hidden><thead><tr><th>Number</th><th>Your tab</th><th>The record</th><th></th></tr></thead><tbody></tbody></table></div>
+</section>
+<section id="what">
+  <h2>What this is</h2>
+  <p>This is Rung 7, the last rung of a ladder toward computing by geometry instead of by large models. Rungs 1 to 6 showed, each on its own, that a settling cell can read digits, improve itself with no model, sit behind exact code, share safely, reject shapes that won't settle, and keep working as a fabric loses nodes. Rung 7 asks whether all of that fits the budget of a small device and fails safe there. It is honest about where it stands: the device budget is measured on an emulator, and the run on a real Raspberry Pi is still to come.</p>
+</section>
+<section id="start">
+  <h2>Start here</h2>
+  <ol>
+    <li>Read <a href="#result">The result</a>. The CI1 row says plainly that no real chip has run this yet.</li>
+    <li>Look at <a href="#chip">The chip, byte by byte</a> to see where every byte goes.</li>
+    <li>Use <a href="#try">Screen one input</a> on a real digit, then on an attack, then with a corrupted byte.</li>
+    <li>Press <b>Re-run the whole record</b> to reproduce the record's hash in your tab.</li>
+    <li>Off the page: clone the repo and run <code>node --test test/*.test.mjs</code>, <code>node tools/learn.mjs --check</code> and <code>node tools/eval.mjs --check</code>.</li>
+  </ol>
+</section>
+<section id="how">
+  <h2>How it works</h2>
+  <div class="svgwrap">
+    <svg viewBox="0 0 900 250" role="img" aria-label="An input passes the signature floor, the memory check and the fit-check before it is delivered; a corrupted memory reloads from the read-only copy; spare cycles try to improve the antibodies; antibody sets are shared signed">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" style="color:var(--muted)">
+        <rect x="10" y="40" width="120" height="56" rx="10"/><rect x="170" y="40" width="150" height="56" rx="10"/><rect x="360" y="40" width="150" height="56" rx="10"/><rect x="550" y="40" width="160" height="56" rx="10"/><rect x="750" y="40" width="140" height="56" rx="10"/>
+        <rect x="360" y="160" width="150" height="56" rx="10"/><rect x="550" y="160" width="160" height="56" rx="10"/><rect x="750" y="160" width="140" height="56" rx="10"/>
+        <path d="M130 68H170M320 68H360M510 68H550M710 68H750" style="color:var(--accent)" stroke="currentColor"/>
+        <path d="M435 96V160M630 160V96M820 160V96" stroke-dasharray="5 4" style="color:var(--accent)" stroke="currentColor"/>
+      </g>
+      <g font-family="ui-monospace,monospace" font-size="13" fill="currentColor" style="color:var(--ink)">
+        <text x="28" y="73">signed input</text><text x="184" y="66">floor: roster,</text><text x="184" y="84">signature, bytes</text>
+        <text x="374" y="66">memory check</text><text x="374" y="84">CRC-32 every time</text><text x="562" y="66">fit-check: settle,</text><text x="562" y="84">zero fit, antibody</text>
+        <text x="766" y="73">deliver / reject</text>
+        <text x="374" y="186">corrupted: down,</text><text x="374" y="204">reload from flash</text><text x="562" y="186">spare cycles: try</text><text x="562" y="204">a new antibody</text>
+        <text x="766" y="186">share antibodies,</text><text x="766" y="204">signed, re-checked</text>
+        <text x="10" y="30" style="fill:var(--muted)">every step in one fixed block of memory, whole numbers only</text>
+      </g>
+    </svg>
+  </div>
+  <ol>
+    <li><b>Floor.</b> The input's sender must be on the roster and its Ed25519 signature must hold on the raw bytes, before anything is parsed. A failed floor is never delivered, whatever else is wrong.</li>
+    <li><b>Memory check.</b> A CRC-32 over the shape, antibody and energy regions, on every input. If it does not match, the layer reports <i>down</i>, still delivers inputs that passed the floor but marked unscreened, and reloads its regions from the read-only copy, so it is back up for the next input.</li>
+    <li><b>Fit-check.</b> The input settles on packed bits exactly as Rung 1's cell settles. Zero fit is rejected as non-fit; if an antibody holds at least the node's fit at the settled state, it is rejected as a known attack; otherwise it passes.</li>
+    <li><b>Spare cycles.</b> When the device's own application confirms an input was an attack, it joins a ring of the last 32. The chip tries putting that attack's settled state into an antibody slot, and keeps the change only if it newly rejects a confirmed attack and rejects none of its 32 regression digits.</li>
+    <li><b>Share.</b> A device signs its antibody set; another device checks the signature on the raw bytes and runs its own regression check before taking it.</li>
+  </ol>
+</section>
+<section id="blueprint">
+  <h2>Blueprint</h2>
+  <div class="cards" id="parts"></div>
+  <ul class="timeline" id="timeline"></ul>
+</section>
+<section id="adoption">
+  <h2>Adoption</h2>
+  <div class="cards">
+    <div class="card"><div class="k">For a device maker</div><p style="margin-top:6px">A boundary layer that fits the memory of a small device, adds a structural check behind the signature, and never stops the device when it fails. It only gates inputs; it never controls the device.</p></div>
+    <div class="card"><div class="k">For engineering</div><p style="margin-top:6px">One block of memory set aside at boot, whole numbers only, every loop bounded, nothing allocated afterwards. The emulator is the reference to port from; its every result re-derives byte for byte.</p></div>
+    <div class="card"><div class="k">For risk and procurement</div><p style="margin-top:6px">The limits are stated: not yet run on silicon, code size not measured, and no defence against stolen keys, physical tampering or bad firmware.</p></div>
+  </div>
+</section>
+<section id="paper">
+  <h2>White paper: an immune layer for a small device</h2>
+  <p><b>The question.</b> Can the settling defence of Rungs 1 to 6 run in a microcontroller's budget, fail safe, improve itself with no model, and share what it learns between devices?</p>
+  <p><b>The method.</b> chip-sim, an emulator held to microcontroller rules, runs Rung 4's defended shape and Rung 5's antibodies. Device A learns from confirmed scrambled training digits; device B adopts A's signed antibodies after its own check. The learning record, shapes and chip code were frozen by hash; then the 10,000 MNIST test digits, held-out attacks and 200 injected faults were run once.</p>
+  <p><b>The results, from the record:</b></p>
+  <ul id="results"></ul>
+  <p><b>The limits, plainly:</b></p>
+  <ul>
+    <li>An emulator, not a chip. CI1, a run on a Raspberry Pi, is pending hardware. Timings are estimates from counted operations, not measurements.</li>
+    <li>Code size is not claimed: no compiler was run. A device would need a C Ed25519 library, whose size is not measured here.</li>
+    <li>The MNIST test digits were read before by Rungs 3 to 6, for other claims.</li>
+    <li>It gates inputs only. It does not stop a stolen key's genuine-looking inputs, physical tampering or bad firmware.</li>
+  </ul>
+</section>
+<section id="business">
+  <h2>For business</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Who</th><th>What this means for them</th></tr></thead>
+    <tr><td>CEO</td><td>A defence layer that can live on the device itself, with no cloud service and no model behind it, that learns from what your own devices confirm.</td></tr>
+    <tr><td>Finance</td><td>No per-device cloud fee and no model hosting. The cost case below uses your own numbers.</td></tr>
+    <tr><td>Operations</td><td>When its memory is corrupted it falls back safely and comes back by itself; the device keeps running either way.</td></tr>
+    <tr><td>CTO / CISO</td><td>A signature floor that is never skipped, a structural check behind it, memory checked on every input, signed and re-checked antibody sharing, and a full re-derivable record. Plus a clear list of what it does not cover.</td></tr>
+  </table></div>
+  <h3>The cost case for one process</h3>
+  <p class="muted">Your numbers in; sourced figures for the rest, each source listed. These are your costs. No price of ours appears. The starting values are an example process. Put in your own.</p>
+  <div class="controls">
+    <label>hours a week <input id="c-hours" type="number" min="0" max="168" value="20"></label>
+    <label>share taken off % <input id="c-share" type="number" min="0" max="100" value="50"></label>
+    <label>people <input id="c-seats" type="number" min="0" value="5"></label>
+    <label>cases a week <input id="c-cases" type="number" min="0" value="500"></label>
+    <label>years <input id="c-years" type="number" min="1" max="10" value="3"></label>
+  </div>
+  <p id="c-head" style="font-size:17px">…</p>
+  <div class="tablewrap"><table id="c-table"><thead><tr><th>Route</th><th>What it means</th><th>A year</th><th id="c-overh">Over the years</th></tr></thead><tbody></tbody></table></div>
+  <p id="c-note" class="muted" style="margin-top:8px"></p>
+  <h3>The case for the board</h3>
+  <p id="c-board"></p>
+  <h3>Questions buyers ask</h3>
+  <div class="tablewrap"><table>
+    <tr><td><b>Has it run on a real device?</b></td><td>Not yet. Every number here is from chip-sim, an emulator held to microcontroller rules. The run on a Raspberry Pi (CI1) is pending hardware and is shown as not tested.</td></tr>
+    <tr><td><b>How much memory does it need?</b></td><td id="faq-mem">Loading…</td></tr>
+    <tr><td><b>What happens if its memory is corrupted?</b></td><td id="faq-fault">Loading…</td></tr>
+    <tr><td><b>What failed?</b></td><td id="faq-failed">Loading…</td></tr>
+    <tr><td><b>What does it not protect against?</b></td><td>A stolen key's genuine-looking inputs, physical tampering, and bad firmware in the supply chain. It gates inputs at the boundary and never controls the device.</td></tr>
+    <tr><td><b>Who has done this for a client? Is it certified?</b></td><td>No client case study is published yet, and no certification is claimed. The record re-derives from pinned files, on GitHub's runner and in your browser.</td></tr>
+  </table></div>
+  <p style="margin-top:10px">Supplied by <a href="https://www.ai-nativesolutions.com" rel="noopener">AI Native Solutions</a>; contact through that site. Support, SLA, warranty and liability are agreed per deployment. The code is MIT. The rungs below: <a href="https://sjgant80-hub.github.io/settling-cell/">1</a>, <a href="https://sjgant80-hub.github.io/code-rsi/">2</a>, <a href="https://sjgant80-hub.github.io/hybrid-gate/">3</a>, <a href="https://sjgant80-hub.github.io/mesh-share/">4</a>, <a href="https://sjgant80-hub.github.io/geometric-defence/">5</a>, <a href="https://sjgant80-hub.github.io/nested-fabric/">6</a>.</p>
+  <p class="muted" style="margin-top:8px">Sources, as read into the cost basis:</p>
+  <ul id="c-src" class="muted" style="font-size:13px"></ul>
+</section>
+</main>
+<footer>
+  <p>Data: the MNIST database of handwritten digits, Y. LeCun, C. Cortes and C. J. C. Burges, CC BY-SA 3.0; pinned by SHA-256.</p>
+  <p>Built on Rungs 1, 3, 4 and 5 and the estate's Ed25519 keys, byte for byte. The cell's energy follows Hopfield (1982) and Krotov &amp; Hopfield (2016).</p>
+  <p>Powered by the Konomi architecture, created by Thomas Frumkin.</p>
+  <p>MIT licence for the code; the MNIST files keep their CC BY-SA 3.0 licence · <a href="https://github.com/sjgant80-hub/chip-immune">source</a> · Rung 7 of the geometric ladder.</p>
+</footer>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>

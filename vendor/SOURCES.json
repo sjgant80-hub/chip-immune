@@ -1,0 +1,91 @@
+{
+ "note": "Vendored byte for byte; test/page.test.mjs checks every sha256, and nothing under vendor/ may be unpinned.",
+ "sources": [
+  {
+   "from": "sjgant80-hub/settling-cell",
+   "commit": "e589c48",
+   "files": [
+    {
+     "path": "vendor/settling-cell/src/cell.mjs",
+     "src": "src/cell.mjs",
+     "sha256": "590c8307b06148dbfa7c2e4a247336441e150d8235d62783c45efb53190d9101"
+    },
+    {
+     "path": "vendor/settling-cell/vendor/seed-library/seedlib.mjs",
+     "src": "vendor/seed-library/seedlib.mjs",
+     "sha256": "f1904ed31b48794ac3454453d5853e799509dcdf8b8695ffea8bcedfd6f60e72"
+    },
+    {
+     "path": "vendor/settling-cell/vendor/seed-library/sha256.mjs",
+     "src": "vendor/seed-library/sha256.mjs",
+     "sha256": "8ebd4260e8b79fbdf9824ecbe6d6cde621cc003f1d358255101c01bb26763233"
+    }
+   ]
+  },
+  {
+   "from": "sjgant80-hub/hybrid-gate",
+   "commit": "a1e7f72",
+   "files": [
+    {
+     "path": "vendor/hybrid-gate/src/mnist.mjs",
+     "src": "src/mnist.mjs",
+     "sha256": "d2e0d4faa5b3b927a0261e1def5620df317fa3925ab32fb0cb3d80a1605b3616"
+    }
+   ]
+  },
+  {
+   "from": "sjgant80-hub/mesh-share",
+   "commit": "9088b98",
+   "files": [
+    {
+     "path": "vendor/mesh-share/data/cell-after.txt",
+     "src": "data/cell-after.txt",
+     "sha256": "1cd61bfbf39377e39e4ed80135da2032d1d0b0028badd68d51858c5238ab5758"
+    }
+   ]
+  },
+  {
+   "from": "sjgant80-hub/geometric-defence",
+   "commit": "1cb3e45",
+   "files": [
+    {
+     "path": "vendor/geometric-defence/data/antibodies.txt",
+     "src": "data/antibodies.txt",
+     "sha256": "31e829f90a9a040368742698176bc3fb712a4202060d9003c7cc1a008f1d1294"
+    }
+   ]
+  },
+  {
+   "from": "sjgant80-hub/living-seed",
+   "commit": "a8c054d",
+   "files": [
+    {
+     "path": "vendor/living-seed/vendor/keys/keys.mjs",
+     "src": "vendor/keys/keys.mjs",
+     "sha256": "636969fdaaac7eab1868c6670cc7a85da1c22d65498f25e8a2ce5ad3487113e0"
+    },
+    {
+     "path": "vendor/living-seed/vendor/keys/canon.mjs",
+     "src": "vendor/keys/canon.mjs",
+     "sha256": "6ebe4f961ff0a2ce8693de89193921c8b5372c4e08d4941361212dd4cba29d21"
+    }
+   ]
+  },
+  {
+   "from": "sjgant80-hub/liveware",
+   "commit": "48205c7",
+   "files": [
+    {
+     "path": "vendor/liveware/mintcase.mjs",
+     "src": "src/mintcase.mjs",
+     "sha256": "890be73fd6ece622ccb424e0c191c22738198a01bc177ebe5b362b9ddcb69eef"
+    },
+    {
+     "path": "vendor/liveware/basis.json",
+     "src": "vendor/ai-first-company/vendor/sovereign-enterprise/data/basis.json",
+     "sha256": "83e9c2effa2f81596dcfa7110f030940032c1910cdf928d27d628ae59d73bb42"
+    }
+   ]
+  }
+ ]
+}
