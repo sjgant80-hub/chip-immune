@@ -1,0 +1,103 @@
+{
+ "record": {
+  "emulator": true,
+  "ci1": "pending hardware: no Pi in hand",
+  "arena": 13767,
+  "arenaMax": 32768,
+  "digits": 10000,
+  "per": 300,
+  "genuinePass": 9771,
+  "scrambled": {
+   "before": 113,
+   "after": 113,
+   "deviceB": 113
+  },
+  "noise": 300,
+  "inverted": 300,
+  "lowCI5": 0,
+  "regressionPasses": false,
+  "mismatches": 0,
+  "errors": 0,
+  "faults": {
+   "injected": 200,
+   "caught": 200,
+   "backUp": 200,
+   "floorHeld": 200
+  },
+  "opsMedian": 153600,
+  "msEstimate": 2.56,
+  "learned": {
+   "passed": 160,
+   "kept": 0,
+   "aCount": 10,
+   "honest": "adopted",
+   "forged": "bad-signature",
+   "forgedUnchanged": true
+  },
+  "hash": "1e9a4226a2aaf57cd888dde5eb3dc409095ca5beee5c3ffa4d3a3f9d7c78e37c"
+ },
+ "verdicts": [
+  {
+   "id": "CI1",
+   "what": "runs on a Raspberry Pi",
+   "measured": "pending hardware: no Pi in hand",
+   "bar": "a run on a device",
+   "pass": false
+  },
+  {
+   "id": "CI-EQ",
+   "what": "chip-sim settles exactly as Rung 1's kernel, on every judged input",
+   "measured": "0 mismatches",
+   "bar": "none",
+   "pass": true
+  },
+  {
+   "id": "CI2",
+   "what": "the whole layer's data in one arena",
+   "measured": "13767 bytes",
+   "bar": "at most 32768 bytes",
+   "pass": true
+  },
+  {
+   "id": "CI4",
+   "what": "test digits passing; held-out noise and inverted rejected; no errors",
+   "measured": [
+    0.9771,
+    1,
+    1,
+    0
+   ],
+   "bar": "at least 0.97, 0.99, 0.99, and 0 errors",
+   "pass": true
+  },
+  {
+   "id": "CI5",
+   "what": "held-out scrambled rejected after evolution against before: lower bound, and the regression set",
+   "measured": [
+    0,
+    "113 → 113",
+    false
+   ],
+   "bar": "above 0, and every regression digit passing",
+   "pass": false
+  },
+  {
+   "id": "CI6",
+   "what": "B adopts A's share after its own check and rejects at least as well; a forged share refused, B unchanged",
+   "measured": [
+    "adopted",
+    "bad-signature",
+    "113 vs 113"
+   ],
+   "bar": "adopted, bad-signature, B ≥ A",
+   "pass": true
+  },
+  {
+   "id": "CI7",
+   "what": "injected faults: caught (layer down), floor still holding, back up by the next input",
+   "measured": "200 caught, 200 floor held, 200 back up, of 200",
+   "bar": "all 200 each",
+   "pass": true
+  }
+ ]
+}
