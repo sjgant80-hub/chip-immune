@@ -16,7 +16,7 @@ const REGION = { K: 'the energy table', P: 'the stored shape (patterns)', AB: 't
 function show(v, r) {
   const m = v.measured;
   if (v.id === 'CI4') return pct(m[0]) + ' of test digits pass · noise ' + pct(m[1]) + ' and inverted ' + pct(m[2]) + ' rejected · ' + m[3] + ' errors';
-  if (v.id === 'CI5') return 'lower bound ' + (m[0] * 100).toFixed(2) + ' points · scrambled rejected ' + m[1] + ' of ' + r.per + ' · regression set ' + (m[2] ? 'kept' : 'broken');
+  if (v.id === 'CI5') return 'lower bound ' + (m[0] * 100).toFixed(2) + ' points · scrambled rejected ' + m[1] + ' of ' + r.per + ' · ' + (m[2] ? 'every regression digit passes' : 'not every regression digit passes (one settles with zero fit from the start)');
   if (v.id === 'CI6') return 'B ' + m[0] + ' A\'s share · forged share ' + m[1] + ' · B rejects ' + m[2];
   return String(m);
 }

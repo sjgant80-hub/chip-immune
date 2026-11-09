@@ -25,7 +25,7 @@ async function one(q) {
   const ops0 = chip.ops, s = await H.screen(chip, { bytes: sent, sig, pub: app.pub }, [app.pub]);
   steps.push(['floor', 'layer' in s ? 'held: the sender is on the roster and the signature holds on the raw bytes' : 'refused before parsing: ' + s.verdict]);
   if ('layer' in s) steps.push(['memory check', s.layer === 'down' ? 'the CRC-32 did not match: the layer went down, delivered the input unscreened, and reloaded from the read-only copy' : 'the CRC-32 matched']);
-  if ('fit' in s) steps.push(['fit-check', (s.fit === 0 ? 'settled with zero fit: ' : 'settled to class ' + s.answer + ' with fit ' + s.fit + ': ') + s.verdict]);
+  if ('fit' in s) steps.push(['fit-check', (s.fit === 0 ? 'settled with zero fit: ' : 'settled to class ' + s.answer + ' with fit ' + s.fit + ': ') + s.verdict + (q.kind === 'genuine' && s.fit > 0 && s.answer !== F.test.y[i] ? ' (it settled into a class-' + s.answer + ' well though the digit is labelled ' + F.test.y[i] + '; the layer only decides pass or reject, and its reading is not used)' : '')]);
   steps.push(['result', (s.delivered ? 'delivered' : 'not delivered') + ' · ' + s.verdict + ' · ' + (chip.ops - ops0) + ' operations (emulator count)']);
   if (q.fault) { const next = await H.screen(chip, { bytes, sig, pub: app.pub }, [app.pub]); steps.push(['next input', 'the next input finds the layer ' + next.layer + ': ' + next.verdict]); }
   return steps;

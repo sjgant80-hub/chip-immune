@@ -72,7 +72,7 @@ footer p+p{margin-top:6px}
 </head>
 <body>
 <nav class="top" aria-label="Sections">
-  <a href="#result">The result</a><a href="#chip">The chip, byte by byte</a><a href="#try">Screen one input</a><a href="#rerun">Re-run it</a><a href="#start">Start here</a><a href="#how">How it works</a><a href="#blueprint">Blueprint</a><a href="#adoption">Adoption</a><a href="#paper">White paper</a><a href="#business">For business</a>
+  <a href="#result">The result</a><a href="#chip">The chip, byte by byte</a><a href="#try">Screen one input</a><a href="#rerun">Re-run it</a><a href="#words">Words</a><a href="#start">Start here</a><a href="#how">How it works</a><a href="#blueprint">Blueprint</a><a href="#adoption">Adoption</a><a href="#paper">White paper</a><a href="#business">For business</a>
 </nav>
 <header class="hero">
   <h1>A defence small enough for a microcontroller.</h1>
@@ -114,7 +114,22 @@ footer p+p{margin-top:6px}
 </section>
 <section id="what">
   <h2>What this is</h2>
-  <p>This is Rung 7, the last rung of a ladder toward computing by geometry instead of by large models. Rungs 1 to 6 showed, each on its own, that a settling cell can read digits, improve itself with no model, sit behind exact code, share safely, reject shapes that won't settle, and keep working as a fabric loses nodes. Rung 7 asks whether all of that fits the budget of a small device and fails safe there. It is honest about where it stands: the device budget is measured on an emulator, and the run on a real Raspberry Pi is still to come.</p>
+  <p>This is Rung 7, the last rung of a ladder toward computing by geometry instead of by large models. Rungs 1 to 6 tested, each on its own, whether a settling cell can read digits, improve itself with no model, sit behind exact code, share safely, reject shapes that won't settle, and keep working as a fabric loses nodes. Some of that held and some failed, all of it published on the <a href="https://sjgant80-hub.github.io/geometric-ladder/">ladder page</a>. Rung 7 asks whether all of that fits the budget of a small device and fails safe there. It is honest about where it stands: the device budget is measured on an emulator, and the run on a real Raspberry Pi is still to come.</p>
+</section>
+<section id="words">
+  <h2>Words on this page</h2>
+  <div class="tablewrap"><table>
+    <tr><td><b>Emulator (chip-sim)</b></td><td>A program that runs the layer under a microcontroller's rules (fixed memory, whole numbers, bounded loops), on an ordinary computer. It is not a chip; every number from it says so.</td></tr>
+    <tr><td><b>Arena</b></td><td>The one block of memory the layer gets at boot. Everything it holds lives there; nothing is allocated later.</td></tr>
+    <tr><td><b>Floor</b></td><td>The first check on every input: the sender's key is on the list, and the Ed25519 signature holds on the raw bytes. Nothing that fails it is ever delivered.</td></tr>
+    <tr><td><b>Settle, fit</b></td><td>The layer flips the input's bits one at a time towards its stored digit patterns until nothing more changes. The fit is how strongly the settled state matches them; zero fit means it matches nothing.</td></tr>
+    <tr><td><b>Antibody</b></td><td>A stored pattern of a known attack. If the antibodies match the settled state at least as well as the real patterns do, the input is rejected.</td></tr>
+    <tr><td><b>CRC-32, down, up</b></td><td>A checksum over the layer's memory, checked on every input. If it does not match, the layer is <i>down</i> for that input (the input is delivered, marked unscreened) and reloads from a read-only copy; when that checks, it is <i>up</i> again.</td></tr>
+    <tr><td><b>Confirmed attack</b></td><td>An input the device's own application later reports as an attack. A chip has no labels, so this is the only thing it can learn from.</td></tr>
+    <tr><td><b>Regression set</b></td><td>32 real digits kept on the chip. A self-improvement is kept only if all of them still pass.</td></tr>
+    <tr><td><b>Seal</b></td><td>Committing the claims (seal 1), then the frozen chip and learning record (seal 2), to the public record before the test digits are read.</td></tr>
+    <tr><td><b>Mutation gate</b></td><td>A tool (witness) that breaks the code in small ways, one at a time, and checks the tests catch every break. Clean means every one was caught.</td></tr>
+  </table></div>
 </section>
 <section id="start">
   <h2>Start here</h2>
@@ -166,6 +181,16 @@ footer p+p{margin-top:6px}
     <div class="card"><div class="k">For engineering</div><p style="margin-top:6px">One block of memory set aside at boot, whole numbers only, every loop bounded, nothing allocated afterwards. The emulator is the reference to port from; its every result re-derives byte for byte.</p></div>
     <div class="card"><div class="k">For risk and procurement</div><p style="margin-top:6px">The limits are stated: not yet run on silicon, code size not measured, and no defence against stolen keys, physical tampering or bad firmware.</p></div>
   </div>
+  <h3>A pilot, step by step</h3>
+  <ol>
+    <li>Pick one device class and the inputs at its boundary you want gated.</li>
+    <li>Write down the bars before anything is built, and seal them.</li>
+    <li>Port chip-sim to C on one development board, and run this record on it. That is CI1, the step not yet done.</li>
+    <li>Run the layer beside your current input checks, in monitor mode: it reports, it rejects nothing.</li>
+    <li>Freeze it, then judge it once on inputs it never saw. The fee is due only if it beat your current way.</li>
+    <li>Only then let it reject inputs, one device group at a time, with the fail-safe in place.</li>
+  </ol>
+  <p class="muted">What the emulator runs on: Node.js 20 or a current browser. A device build would need a C compiler and a C Ed25519 library; neither is measured here.</p>
 </section>
 <section id="paper">
   <h2>White paper: an immune layer for a small device</h2>
