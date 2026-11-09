@@ -231,9 +231,11 @@ footer p+p{margin-top:6px}
   <p id="c-board"></p>
   <h3>Questions buyers ask</h3>
   <div class="tablewrap"><table>
-    <tr><td><b>Has it run on a real device?</b></td><td>Not yet. Every number here is from chip-sim, an emulator held to microcontroller rules. The run on a Raspberry Pi (CI1) is pending hardware and is shown as not tested.</td></tr>
+    <tr><td><b>Has it run on a real device?</b></td><td>Not yet. Every number here is from chip-sim, an emulator held to microcontroller rules. The run on a Raspberry Pi (CI1) is pending hardware and is shown as not tested. No date is promised until a board is in hand.</td></tr>
+    <tr><td><b>How often is it wrong?</b></td><td id="faq-wrong">Loading…</td></tr>
     <tr><td><b>How much memory does it need?</b></td><td id="faq-mem">Loading…</td></tr>
     <tr><td><b>What happens if its memory is corrupted?</b></td><td id="faq-fault">Loading…</td></tr>
+    <tr><td><b>How is it updated in the field?</b></td><td>Only two ways. Its own spare-cycle evolution (which kept no change here), or a signed antibody share from another device that passes this device's own regression check. The defended shape itself is fixed at boot from read-only memory; changing it means a new firmware build.</td></tr>
     <tr><td><b>What failed?</b></td><td id="faq-failed">Loading…</td></tr>
     <tr><td><b>What does it not protect against?</b></td><td>A stolen key's genuine-looking inputs, physical tampering, and bad firmware in the supply chain. It gates inputs at the boundary and never controls the device.</td></tr>
     <tr><td><b>Who has done this for a client? Is it certified?</b></td><td>No client case study is published yet, and no certification is claimed. The record re-derives from pinned files, on GitHub's runner and in your browser.</td></tr>
