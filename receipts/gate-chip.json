@@ -1,0 +1,9 @@
+{
+ "kernel": "src/chip.mjs",
+ "witness": "v0.6",
+ "total": 68,
+ "killed": 68,
+ "survived": 0,
+ "ignored": 0,
+ "clean": true
+}

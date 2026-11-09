@@ -1,0 +1,9 @@
+{
+ "kernel": "src/run.mjs",
+ "witness": "v0.6",
+ "total": 40,
+ "killed": 40,
+ "survived": 0,
+ "ignored": 0,
+ "clean": true
+}
